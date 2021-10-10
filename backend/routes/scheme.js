@@ -5,7 +5,20 @@ const Scheme = require('../models/Scheme');
 
 
 router.post('/', function(req, res){
-    console.log(req.body);
+    
+    // console.log(req.body);
+    data = req.body.excel_data;
+    // console.log(data);
+    dataHeaders = req.body.data_header;
+    cond = req.body.condition_type;
+    var scheme_credit = 0;
+    // console.log(data[0]);
+    if(cond==="No"){
+        data.map((active_mobile)=>{
+            scheme_credit = scheme_credit + active_mobile.Price;
+        })
+    }
+    console.log(scheme_credit);
     const scheme = new Scheme(req.body);
     scheme.save(function(err){
         if(err) {

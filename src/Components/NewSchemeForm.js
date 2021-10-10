@@ -16,7 +16,7 @@ function RenderPriceCondition(){
             <Row>
                 <Col md={2} xs={2}>
                     <Form.Control
-                    as="select">
+                    as="select" name="priceOperator">
                     <option value=">=">{">="}</option>
                     <option value="=">=</option>
                     <option value="<=">{"<="}</option>
@@ -58,9 +58,8 @@ function NewSchemeForm(){
         model: '',
         price: ''
     });
+    const [excelJSON,setExcelJSON] = useState();
     const [modelShow,setModelShow] = useState();
-    const [schemeName,setSchemeName] = useState();
-    const [dateColumn,setDateColumn] = useState();
     const [userHeaderSubmit,setUserHeaderSubmit] = useState();
     const history = useHistory();
     var fileHeaderOptions;
@@ -100,7 +99,8 @@ function NewSchemeForm(){
             const data = XLSX.utils.sheet_to_json(ws);
             /* Update state */
             //   console.log(JSON.stringify(data, null, 2));
-            const dataJSON = JSON.stringify(data, null, 2);
+            // const dataJSON = JSON.stringify(data, null, 2);
+            setExcelJSON(data);
             setFileHeader(Object.keys(data[0]));
             setModelShow(true);
             //   this.setState({ data: data, cols: make_cols(ws['!ref']) }, () => {
@@ -119,45 +119,57 @@ function NewSchemeForm(){
         }
       }
     function handleUserHeaderSubmit(e){
-        console.log(e);
+        e.preventDefault();
+        const curr_state = {
+            date: e.target.dateCol.value,
+            price: e.target.priceCol.value,
+            model: e.target.modelCol.value,
+        }
+        setUserHeader(curr_state);
         setUserHeaderSubmit(true);
         setModelShow(false);
         return(<div></div>);
     }
-    function handleUserHeaderChange(e){
-        // if(e.target.name === 'date'){
-        //     var currState = userHeader;
-        //     currState.date = e.target.value;
-        //     setUserHeader(currState);
-        // }
-        // else if(e.target.name === 'model'){
-        //     var currState = userHeader;
-        //     currState.model = e.target.value;
-        //     setUserHeader(currState);      
-        // }
-        // else if(e.target.name === 'price'){
-        //     var currState = userHeader;
-        //     currState.price = e.target.value;
-        //     setUserHeader(currState);      
-        // }
-        // else {}
-        console.log("yaayy");
-    }
     async function handleAddScheme(event) {
+        var priceOperator;
+        var condValue; 
         event.preventDefault();
-        try{
-           const createTask = await axios.post(`http://localhost:3000/scheme/`, {
-                 name: event.target.schemeName.value,
-                 start_date: event.target.startDate.value,
-                 end_date: event.target.endDate.value,
-                 condition_type: event.target.condType.value
-           });
-           alert('Scheme ' + event.target.schemeName.value + ' added succesfully');
-           history.push("/");
+        if(condType === "No"){
+            priceOperator = null;
+            condValue = null
         }
-        catch(e){
-           console.log(e);
-           alert(e.message);
+        else if(condType === "Price_Condition"){
+            priceOperator = event.target.priceOperator.value;
+            condValue = event.target.condValue.value
+        }
+        if(userHeaderSubmit){
+            try{
+                
+            const createTask = await axios.post(`http://localhost:3000/scheme/`, {
+                    name: event.target.schemeName.value,
+                    start_date: event.target.startDate.value,
+                    end_date: event.target.endDate.value,
+                    condition_type: event.target.condType.value,
+                    price_condition: {
+                        operator: priceOperator,
+                        price : condValue
+                    },
+                    data_header:{
+                        date: userHeader.date,
+                        price: userHeader.price,
+                        model: userHeader.model
+                    },
+                    excel_data:excelJSON
+            });
+            alert('Scheme ' + event.target.schemeName.value + ' added succesfully');
+            }
+            catch(e){
+            console.log(e);
+            alert(e.message);
+            }
+        }
+        else{
+            alert("Please upload the Activation Sheet & select the correct columns");
         }
        //  alert("States added successfully");
        //  fetchStateData();
@@ -175,43 +187,43 @@ function NewSchemeForm(){
             </Form.Group>
             </Form>
         <Form onSubmit={handleAddScheme}>
-        <Form.Group className="mb-3" controlId="formBasicName">
-            <Form.Label>Scheme Name</Form.Label>
-            <Form.Control type="name" name="schemeName" placeholder="Enter Scheme Name" />
-            <Form.Text className="text-muted">
-            Create a new name for scheme to help you track later on
-            </Form.Text>
-        </Form.Group>
-        <Form.Group className="mb-3" controlId="start_date">
-            <Form.Label>Start Date</Form.Label>
-            <Form.Control type="date" name="startDate" placeholder="Scheme Start Date" />
-        </Form.Group>
-        <Form.Group className="mb-3" controlId="end_date">
-            <Form.Label>End Date</Form.Label>
-            <Form.Control type="date" name="endDate" placeholder="Scheme End Date" />
-        </Form.Group>
+            <Form.Group className="mb-3" controlId="formBasicName">
+                <Form.Label>Scheme Name</Form.Label>
+                <Form.Control required type="name" name="schemeName" placeholder="Enter Scheme Name" />
+                <Form.Text className="text-muted">
+                Create a new name for scheme to help you track later on
+                </Form.Text>
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="start_date">
+                <Form.Label>Start Date</Form.Label>
+                <Form.Control required type="date" name="startDate" placeholder="Scheme Start Date" />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="end_date">
+                <Form.Label>End Date</Form.Label>
+                <Form.Control type="date" name="endDate" placeholder="Scheme End Date" />
+            </Form.Group>
 
-        <Form.Group className="mb-3" controlId="formBasicCondType">
-            <Form.Label>Select Condition Type</Form.Label>
-            <Form.Control
-            as="select"
-            name="condType"
-            value={condType}
-            onChange={e => {
-                console.log("e.target.value", e.target.value);
-                setCondType(e.target.value);
-            }}
-            >
-            <option value="No">No Condition</option>
-            <option value="Price_Condition">Price Condition</option>
-            <option value="Model_Condition">Model Condition</option>
-            </Form.Control>
-        </Form.Group>
-        <RenderCondition condType={condType} />
+            <Form.Group className="mb-3" controlId="formBasicCondType">
+                <Form.Label>Select Condition Type</Form.Label>
+                <Form.Control required
+                as="select"
+                name="condType"
+                value={condType}
+                onChange={e => {
+                    console.log("e.target.value", e.target.value);
+                    setCondType(e.target.value);
+                }}
+                >
+                <option value="No">No Condition</option>
+                <option value="Price_Condition">Price Condition</option>
+                <option value="Model_Condition">Model Condition</option>
+                </Form.Control>
+            </Form.Group>
+            <RenderCondition condType={condType} />
 
-        <Button variant="primary" type="submit">
-            Submit
-        </Button>
+            <Button variant="primary" type="submit">
+                Submit
+            </Button>
         </Form>
 
         <Modal show={modelShow}>
@@ -219,32 +231,33 @@ function NewSchemeForm(){
               <Modal.Title>Please Select the Correct Attributes</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form>
+                <Form onSubmit={handleUserHeaderSubmit}>
                     <Form.Group className="mb-3" controlId="date_column">
                         <Form.Label>Date Column</Form.Label>
-                        <Form.Control as="select" name="date" onChange = {(e) => handleUserHeaderChange(e)}>
+                        <Form.Control as="select" name="dateCol">
                         {fileHeaderOptions}
                         </Form.Control>
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="model_column">
                         <Form.Label>Model Column</Form.Label>
-                        <Form.Control as="select" name = "Model" onChange = {(e) => handleUserHeaderChange(e)}>
+                        <Form.Control as="select" name = "modelCol">
                         {fileHeaderOptions}
                         </Form.Control>
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="Price_column">
                         <Form.Label>Price Column</Form.Label>
-                        <Form.Control as="select" name ="Price" onChange = {(e) => handleUserHeaderChange(e)}>
+                        <Form.Control as="select" name ="priceCol">
                         {fileHeaderOptions}
                         </Form.Control>
                     </Form.Group>
+                    <Modal.Footer>
+                        <Button variant="primary" type="Submit">
+                            Submit 
+                        </Button>
+                    </Modal.Footer>
                 </Form>
             </Modal.Body>
-            <Modal.Footer>
-              <Button variant="primary" type="Submit" onClick = {(e) => handleUserHeaderSubmit(e)}>
-                Submit 
-              </Button>
-            </Modal.Footer>
+            
           </Modal>
         </div>
         </div>

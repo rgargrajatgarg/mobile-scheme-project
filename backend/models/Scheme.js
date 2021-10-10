@@ -5,7 +5,17 @@ const schemeSchema = new mongoose.Schema(
       name: String,
       start_date: Date,
       end_date: Date,
-      condition_type: String
+      condition_type: String,
+      price_condition: {
+          operator: String,
+          price : Number
+      },
+      data_header:{
+            date: String,
+            price: String,
+            model: String
+      },
+      excel_data: Object
     }
 );
 
