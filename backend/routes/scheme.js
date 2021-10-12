@@ -1,13 +1,13 @@
 var express = require('express');
 var router = express.Router();
-var multer = require('multer');
 const Scheme = require('../models/Scheme');
 /* GET users listing. */
 
 //! Use of Multer
 
+
 router.post('/', function(req, res){
-    
+    console.log(req.body.fileName);
     // console.log(req.body);
     data = req.body.excel_data;
     dataHeaders = req.body.data_header;

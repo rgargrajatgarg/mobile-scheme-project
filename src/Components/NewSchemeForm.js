@@ -129,6 +129,19 @@ function NewSchemeForm(){
         setModelShow(false);
         return(<div></div>);
     }
+    function handleImageFileChange(event){
+        const data = new FormData();
+        data.append('file', event.target.files[0]);
+        console.log(data);
+        try{
+            axios.post('http://localhost:3000/upload/', data);
+        }
+        catch(e){
+            console.log(e);
+            alert(e.message);
+        }
+         
+    }
     async function handleAddScheme(event) {
         var priceOperator;
         var condValue; 
@@ -166,7 +179,8 @@ function NewSchemeForm(){
                     excel_file:{
                         name:file.name,
                         size:file.size
-                    }
+                    },
+                    fileName:file
             });
             alert('Scheme ' + event.target.schemeName.value + ' added succesfully');
             history.push("/");
@@ -195,6 +209,13 @@ function NewSchemeForm(){
             <Form.Group controlId="formFile" className="mb-3">
                     <Form.Label>Upload Activation Sheet</Form.Label>
                     <Form.Control type="file" accept={SheetJSFT} onChange={handleActivationFileChange}/>
+                    <Button variant="primary" type="submit">Upload</Button>
+            </Form.Group>
+            </Form>
+            <Form> 
+            <Form.Group controlId="formFile" className="mb-3">
+                    <Form.Label>Upload Scheme Image</Form.Label>
+                    <Form.Control type="file" name="file" onChange={handleImageFileChange}/>
                     <Button variant="primary" type="submit">Upload</Button>
             </Form.Group>
             </Form>
