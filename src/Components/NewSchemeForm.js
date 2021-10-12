@@ -14,7 +14,7 @@ function RenderPriceCondition(){
         <Form.Group className="mb-3" controlId="formBasicOperator">
             <Form.Label>Select the Condition</Form.Label>
             <Row>
-                <Col md={2} xs={2}>
+                <Col md={2} xs={4}>
                     <Form.Control
                     as="select" name="priceOperator">
                     <option value=">=">{">="}</option>
@@ -65,7 +65,6 @@ function NewSchemeForm(){
     var fileHeaderOptions;
     useEffect(() => {
         setCondType("No");
-        setFile(null);
         setFileHeader(null);
         setModelShow(false);
       }, []);
@@ -159,9 +158,18 @@ function NewSchemeForm(){
                         price: userHeader.price,
                         model: userHeader.model
                     },
-                    excel_data:excelJSON
+                    excel_data:excelJSON,
+                    creditValue:{
+                        creditType: event.target.creditType.value,
+                        creditValue: event.target.creditValue.value
+                    },
+                    excel_file:{
+                        name:file.name,
+                        size:file.size
+                    }
             });
             alert('Scheme ' + event.target.schemeName.value + ' added succesfully');
+            history.push("/");
             }
             catch(e){
             console.log(e);
@@ -177,13 +185,17 @@ function NewSchemeForm(){
     return(
     <div className = "container">
         <div className="row">
-            <div className="col-md-4">
+            <div className="col-md-4 offset-md-4">
+
+            {/* <h3>Now Understanding Credit Note is Easier, Just upload your activation sheet and scheme Details, credit Note (CN) will be calculated for you in less than a minute</h3> */}
+
+
             <p>Please select the Activation file first, then add the scheme details below</p>
-            <Form>
+            <Form onSubmit = {handleActivationUpload}> 
             <Form.Group controlId="formFile" className="mb-3">
-                    <Form.Label>Input Excel file</Form.Label>
+                    <Form.Label>Upload Activation Sheet</Form.Label>
                     <Form.Control type="file" accept={SheetJSFT} onChange={handleActivationFileChange}/>
-                    <input type="submit" value="Upload the file" onClick={handleActivationUpload} />
+                    <Button variant="primary" type="submit">Upload</Button>
             </Form.Group>
             </Form>
         <Form onSubmit={handleAddScheme}>
@@ -220,7 +232,21 @@ function NewSchemeForm(){
                 </Form.Control>
             </Form.Group>
             <RenderCondition condType={condType} />
-
+            <Form.Group className="mb-3" controlId="formBasicOperator">
+            <Form.Label>Offered Amount</Form.Label>
+                <Row>
+                    <Col md={2} xs={4}>
+                        <Form.Control
+                        as="select" name="creditType">
+                        <option value="%">%</option>
+                        <option value="flat">Flat</option>
+                        </Form.Control>
+                    </Col>
+                    <Col>
+                        <Form.Control type="number" step="0.01" name="creditValue" placeholder="Enter Value" />
+                    </Col>
+                </Row>  
+            </Form.Group>
             <Button variant="primary" type="submit">
                 Submit
             </Button>

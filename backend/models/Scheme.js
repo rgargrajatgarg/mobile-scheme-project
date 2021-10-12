@@ -6,6 +6,7 @@ const schemeSchema = new mongoose.Schema(
       start_date: Date,
       end_date: Date,
       condition_type: String,
+      creditNote: Number,
       price_condition: {
           operator: String,
           price : Number
@@ -15,7 +16,12 @@ const schemeSchema = new mongoose.Schema(
             price: String,
             model: String
       },
-      excel_data: Object
+      excel_data: Object,
+      creditValue:{
+          creditType: String,
+          creditValue: Number
+      },
+      excel_file: Object
     }
 );
 

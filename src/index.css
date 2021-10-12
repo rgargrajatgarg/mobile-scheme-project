@@ -1,0 +1,9 @@
+.green-background{
+    background-color: green;
+}
+.more-details{
+    display: none;
+}
+.view-more{
+    float: right;
+}
