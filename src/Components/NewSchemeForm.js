@@ -52,6 +52,7 @@ function NewSchemeForm(){
     
     const [condType,setCondType] = useState();
     const [file,setFile] = useState();
+    const [schemeImage,setSchemeImage] = useState();
     const [fileHeader,setFileHeader] = useState();
     const [userHeader,setUserHeader] = useState({
         date: '',
@@ -129,20 +130,27 @@ function NewSchemeForm(){
         setModelShow(false);
         return(<div></div>);
     }
-    function handleImageFileChange(event){
-        const data = new FormData();
-        data.append('file', event.target.files[0]);
-        console.log(data);
+    function handleImageFileChange(e){
+        const files = e.target.files;
+        if (files && files[0]) {
+            console.log(files[0]);
+            setSchemeImage(files[0]);
+        }
+         
+    }
+    async function handleAddScheme(event) {
+
+        const imgData = new FormData();
+        imgData.append('file', schemeImage);
         try{
-            axios.post('http://localhost:3000/upload/', data);
+            axios.post('http://localhost:3000/upload/', imgData);
         }
         catch(e){
             console.log(e);
             alert(e.message);
         }
-         
-    }
-    async function handleAddScheme(event) {
+
+
         var priceOperator;
         var condValue; 
         event.preventDefault();
@@ -212,14 +220,11 @@ function NewSchemeForm(){
                     <Button variant="primary" type="submit">Upload</Button>
             </Form.Group>
             </Form>
-            <Form> 
-            <Form.Group controlId="formFile" className="mb-3">
-                    <Form.Label>Upload Scheme Image</Form.Label>
-                    <Form.Control type="file" name="file" onChange={handleImageFileChange}/>
-                    <Button variant="primary" type="submit">Upload</Button>
-            </Form.Group>
-            </Form>
         <Form onSubmit={handleAddScheme}>
+            <Form.Group controlId="formFile" className="mb-3" >
+                    <Form.Label>Upload Scheme Image (Optional)</Form.Label>
+                    <Form.Control type="file" name="file" onChange={handleImageFileChange}/>
+            </Form.Group>
             <Form.Group className="mb-3" controlId="formBasicName">
                 <Form.Label>Scheme Name</Form.Label>
                 <Form.Control required type="name" name="schemeName" placeholder="Enter Scheme Name" />
