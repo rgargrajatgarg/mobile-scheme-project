@@ -1,0 +1,60 @@
+.green-background{
+    background-color: green;
+}
+.more-details{
+    display: none;
+}
+.view-more{
+    float: right;
+    background: none !important;
+    border: none !important;
+    color: blue !important;
+}
+.wrapper {
+    margin: 0 auto;
+    position: relative; /* Ensure absolute positioned child elements are relative to this*/
+}
+
+/* Absolute positioned wrapper for the element you want to fix position */
+.new-scheme-wrapper {
+    width: 30px;
+    position: absolute;
+    right: 30px;
+    font-size: 10px;
+     /* Move this out to the left of the site body, leaving a 20px gutter */
+}
+
+/* The element you want to fix the position of */
+.new-scheme-button {
+    position: fixed;
+    top: 0;
+    background: none;
+    border: none;
+    color:white;
+    /* Do not set top / left! */
+}
+.up-icon{
+    display: none;
+}
+.button-delete{
+    background: none;
+    border: none;
+    color: red;
+    position: absolute;
+    top: 0px;
+    right: 20px;
+    width: 20px;
+}
+.button-edit{
+    background: none;
+    border: none;
+    color:#ff5e00;
+}
+.btn:hover{
+    background: none;
+    border: none;
+    color:currentColor;
+}
+.logo{
+    filter: invert(1);
+}

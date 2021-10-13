@@ -143,7 +143,7 @@ function NewSchemeForm(){
         const imgData = new FormData();
         imgData.append('file', schemeImage);
         try{
-            axios.post('http://localhost:3000/upload/', imgData);
+            axios.post('/upload/', imgData);
         }
         catch(e){
             console.log(e);
@@ -165,7 +165,7 @@ function NewSchemeForm(){
         if(userHeaderSubmit){
             try{
                 
-            const createTask = await axios.post(`http://localhost:3000/scheme/`, {
+            const createTask = await axios.post(`/scheme/`, {
                     name: event.target.schemeName.value,
                     start_date: event.target.startDate.value,
                     end_date: event.target.endDate.value,

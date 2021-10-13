@@ -62,7 +62,7 @@ function UpdateScheme(props){
         console.log(id);
         try{
                 
-            const schemeGetCall = await axios.get(`http://localhost:3000/scheme/${id}`);
+            const schemeGetCall = await axios.get(`/scheme/${id}`);
             const dataFromAPI = schemeGetCall.data.results;
             setScheme(dataFromAPI);
             setCondType(dataFromAPI.condition_type);
@@ -90,7 +90,7 @@ function UpdateScheme(props){
         }
             try{
                 
-            const createTask = await axios.put(`http://localhost:3000/scheme/${id}`, {
+            const createTask = await axios.put(`/scheme/${id}`, {
                     name: event.target.schemeName.value,
                     start_date: event.target.startDate.value,
                     end_date: event.target.endDate.value,

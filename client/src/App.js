@@ -6,18 +6,19 @@ import {
   Route,
   Link
 } from "react-router-dom";
-
+import Header from './Components/Header';
 import NewSchemeForm from './Components/NewSchemeForm';
 import ViewScheme from './Components/ViewScheme';
 import UpdateScheme from './Components/UpdateScheme';
 function App() {
   return (
     <div className="App">
+    <Header />
     <Router>
     
 
       <Switch>
-              
+        
         <Route path="/newscheme">
           <NewSchemeForm />
         </Route>
