@@ -58,3 +58,8 @@
 .logo{
     filter: invert(1);
 }
+.fixed-bottom{
+    position: fixed;
+    bottom: 5px !important;
+    text-align: center;
+}

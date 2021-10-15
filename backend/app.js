@@ -29,17 +29,18 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(express.bodyParser({limit: '50mb'}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'build')));
 app.use(cors());
-app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/scheme',schemeRouter);
 app.use('/upload',uploadRouter);
+
 //uncomment below code when pushing to build
-// app.get('/*', function(req,res) {
-//   res.sendFile(path.join(__dirname, 'build', 'index.html'));
-// });
+app.get('/*', function(req,res) {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

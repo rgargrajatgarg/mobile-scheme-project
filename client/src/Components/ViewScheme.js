@@ -1,10 +1,13 @@
 import {
-    Card, Button, Col, Row
+    Card, Button, Col, Row, Toast
   } from 'react-bootstrap';
 import {useState,useEffect} from 'react';
 import {FaChevronCircleDown,FaChevronCircleUp,FaEdit} from 'react-icons/fa';
 import {MdDelete,MdAddCircle,MdCancel} from 'react-icons/md';
+import Loading from './Loading';
 import axios from "axios";
+
+  
 function datePretty(date1){
     return Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(date1)));
 }
@@ -26,14 +29,34 @@ function toggleView(id){
     };
     // console.log(document.getElementById(id).style.display);
 }
-
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 function ViewScheme(){
     const [schemeData,updateSchemeData] = useState([]);
+    const [loading,setLoading] = useState(true);
+    const [deleteLoading,setDeleteLoading] = useState(false);
+    const [deleteshow, setDeleteShow] = useState(false);
     var schemeDetails;
+    function DeleteToast() {
+        
+      
+        return (    
+        <div class="fixed-bottom">
+          <Row>
+            <Col xs={12}>
+              <Toast onClose={() => setDeleteShow(false)} show={deleteshow} delay={2000} autohide>
+                <Toast.Body>Scheme Deleted Succefully</Toast.Body>
+              </Toast>
+            </Col>
+          </Row>
+        </div>
+        );
+    }
     async function fetchSchemeData(){
         try{
             
-            const schemeData = await axios.get(`/scheme/`);
+            const schemeData = await axios.get(`/scheme/`).then(setLoading(false));
             const dataFromAPI = schemeData.data.results;
             updateSchemeData(dataFromAPI);
         }
@@ -43,12 +66,14 @@ function ViewScheme(){
         }
     }
     useEffect(() => {
-        fetchSchemeData();
+          fetchSchemeData();
       }, []);
     async function deleteScheme(id){
+        setDeleteLoading(true);
+
+        // await sleep(2000);        
         try{
-            const delete_scheme = await axios.delete(`/scheme/${id}`);
-            alert("Deleted scheme Succesfully");
+            const delete_scheme = await axios.delete(`/scheme/${id}`).then(setDeleteLoading(false)).then(setDeleteShow(true));
             updateSchemeData(schemeData.filter(item => item._id !== id));
             
         }
@@ -57,6 +82,7 @@ function ViewScheme(){
             alert(e.message);
         }
     }
+
       if(schemeData){
         schemeDetails = schemeData.map((scheme)=> {
             var x = parseInt(scheme.creditNote);
@@ -95,13 +121,16 @@ function ViewScheme(){
         }
     return (
         <div className = "container">
+            {loading || deleteLoading ? <Loading /> : 
             <div className="row">
                 <div className="col-md-4 offset-md-4 p-0">
                   
                     {/* <a href="/newscheme">Add Scheme</a> */}
                     {schemeDetails}
                 </div>
+                {deleteshow ? <DeleteToast /> : ""}
             </div>
+            }
         </div>
       );
 }

@@ -226,11 +226,13 @@ function NewSchemeForm(){
                     <Form.Control type="file" name="file" onChange={handleImageFileChange}/>
             </Form.Group>
             <Form.Group className="mb-3" controlId="formBasicName">
-                <Form.Label>Scheme Name</Form.Label>
+                <Form.Label controlId="floatingInputGrid" label="Email address">
                 <Form.Control required type="name" name="schemeName" placeholder="Enter Scheme Name" />
+                </Form.Label>
                 <Form.Text className="text-muted">
                 Create a new name for scheme to help you track later on
                 </Form.Text>
+
             </Form.Group>
             <Form.Group className="mb-3" controlId="start_date">
                 <Form.Label>Start Date</Form.Label>
